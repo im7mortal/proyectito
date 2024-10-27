@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Public Key Generator</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
+        .container { width: 100%; max-width: 600px; margin: auto; }
+        .text-field { width: 200px; height: 200px; margin: 10px; }
+        .readonly-field { width: 200px; height: 200px; margin: 10px; background-color: #f0f0f0; }
+        button { padding: 10px 20px; margin: 10px; cursor: pointer; }
+        h1 { font-size: 24px; }
+        p { font-size: 16px; color: #555; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Public Key Generator</h1>
+    <p>Did sometimes happen with you that you lost your public key but you still have private key?</p>
+
+    <textarea id="privateKeyField" class="text-field" placeholder="Enter your private key"></textarea><br>
+    <button onclick="extractPublicKey()">Extract Public Key</button>
+    <button onclick="generatePrivateKey()">Generate Private Key for Test</button><br>
+
+    <textarea id="outputField" class="readonly-field" readonly placeholder="Public key or error message will appear here"></textarea>
+</div>
+
+<script>
+    async function extractPublicKey() {
+        const privateKey = document.getElementById('privateKeyField').value;
+        const outputField = document.getElementById('outputField');
+
+        try {
+            const response = await fetch('/v1/extract-public-key', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ private_key: privateKey })
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+                outputField.value = data.public_key;
+            } else {
+                outputField.value = `Error: ${data.error}`;
+            }
+        } catch (error) {
+            outputField.value = `Network error: ${error.message}`;
+        }
+    }
+
+    async function generatePrivateKey() {
+        const outputField = document.getElementById('outputField');
+        const privateKeyField = document.getElementById('privateKeyField');
+
+        try {
+            const response = await fetch('/v1/generate-private-key', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name: "Test User", email: "test@example.com", bit_length: 2048 })
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+                privateKeyField.value = data.private_key;
+                outputField.value = "Generated private key loaded successfully!";
+            } else {
+                outputField.value = `Error: ${data.error}`;
+            }
+        } catch (error) {
+            outputField.value = `Network error: ${error.message}`;
+        }
+    }
+</script>
+</body>
+</html>
