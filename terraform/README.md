@@ -2,7 +2,7 @@
 
 ### Encryption
 
-The config `secret.json` is encrypted with `git-crypt`. I have the SOPS version in the `sops` branch.
+The config `secret.json` is encrypted with `git-crypt`. I have the SOPS version in the [`sops`](https://github.com/im7mortal/proyectito/tree/sops) branch.
 
 ### Test
 #### Creation
